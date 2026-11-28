@@ -1,75 +1,33 @@
-# React + TypeScript + Vite
+# 하늘의 별 따기
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+서울에서 오늘 밤 별 보기 좋은 곳을 찾는 웹 서비스입니다. 지도의 밝은 격자일수록 별을 보기 좋고, 격자를 선택하면 가시성 점수와 하늘 상태, 장소 조건을 볼 수 있습니다.
 
-Currently, two official plugins are available:
+현재 화면은 샘플 예보를 사용합니다. 예보 범위는 한국 시간 기준 오늘 22시부터 다음 날 02시까지이며, 날짜·시간대별 선택 없이 밤 전체 점수 하나를 보여줍니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 개발 환경에서 실행
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```sh
+npm ci
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+터미널에 표시된 주소에서 서비스를 엽니다. 지도는 WebGL을 사용합니다. ‘내 위치’는 브라우저에서 위치를 허용한 뒤 사용할 수 있으며, 위치 확인은 HTTPS 또는 로컬 개발 주소에서 동작합니다.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```sh
+npm run lint
+npm run build
+npm run preview
 ```
+
+## 화면 확인
+
+- 1440×900에서 지도, 범례, 오른쪽 지역 상세를 확인합니다.
+- 390×844에서 지도, 내 위치 버튼, 하단 지역 상세를 확인합니다. 모바일에서는 두 손가락으로 지도를 확대·축소할 수 있습니다.
+- 지도에서 지역을 눌러 점수와 두 가지 조건을 확인합니다. 키보드로 지도를 선택한 뒤 방향키로 움직이고 Enter를 눌러 가운데 지역을 열 수 있습니다.
+- ‘점수 읽는 법’에서 등급 범위를 확인하고 ‘예보 새로고침’을 누를 수 있습니다.
+
+## 예보와 지도 데이터
+
+- 샘플 예보는 `public/data/index.json`에 있습니다. 실제 모델 결과를 전달할 때는 [예보 데이터 형식](docs/data-contract.md)을 사용합니다.
+- 서울시 구·동 경계는 [southkorea/seoul-maps](https://github.com/southkorea/seoul-maps)의 통계청 SGIS 2013년 경계를 사용합니다. 표시용으로 속성을 정리하고 좌표 정밀도를 줄였습니다. 재배포 라이선스는 [지도 데이터 라이선스](public/geo/LICENSE.txt)에 있습니다.
+- 한강은 시안에 맞춰 단순화한 표시용 선입니다. 벡터 타일이나 별도 지도 API 없이 로컬 지도 데이터를 사용합니다.
