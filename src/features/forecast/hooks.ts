@@ -5,6 +5,7 @@ export function useForecast() {
   return useQuery({
     queryKey: ['night-forecast'],
     queryFn: ({ signal }) => fetchForecast(signal),
+    networkMode: 'always',
     retry: false,
   })
 }

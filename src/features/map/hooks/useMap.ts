@@ -41,9 +41,9 @@ export function useMap() {
     const canvas = instance.getCanvas()
     canvas.setAttribute('aria-label', '서울 별 가시성 지도')
     canvas.setAttribute('aria-describedby', 'map-keyboard-help')
+    const mobileScreen = matchMedia('(max-width: 719px)')
     const fit = () => {
-      const mobile = element.clientWidth < 720
-      if (mobile) {
+      if (mobileScreen.matches) {
         instance.jumpTo({ center: seoulCenter, zoom: Math.log2(Math.max(element.clientHeight * 0.63, 305) / 0.502) })
         return
       }
@@ -56,6 +56,12 @@ export function useMap() {
     }
 
     fit()
+    const onLoadError = () => setUnavailable(true)
+    instance.on('error', onLoadError)
+    instance.once('load', () => {
+      instance.off('error', onLoadError)
+      setUnavailable(false)
+    })
     instance.once('load', () => setMap(instance))
     mapLabels.forEach(({ text, coordinates, prominent }) => {
       const label = document.createElement('span')
@@ -65,16 +71,14 @@ export function useMap() {
       new Marker({ element: label }).setLngLat(coordinates).addTo(instance)
     })
 
-    let previousWidth = element.clientWidth
-    const observer = new ResizeObserver(() => {
-      const width = element.clientWidth
-      if ((width < 720) !== (previousWidth < 720)) fit()
-      previousWidth = width
-    })
-    observer.observe(element)
+    const refit = () => {
+      instance.resize()
+      fit()
+    }
+    mobileScreen.addEventListener('change', refit)
 
     return () => {
-      observer.disconnect()
+      mobileScreen.removeEventListener('change', refit)
       instance.remove()
     }
   }, [])

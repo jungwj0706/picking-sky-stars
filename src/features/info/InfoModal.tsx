@@ -4,7 +4,12 @@ import { Modal } from '../../components/ui/Modal'
 import { grades } from '../forecast/grade'
 import { Legend } from '../map/components/Legend'
 
-export function InfoModal({ onClose }: { onClose: () => void }) {
+interface InfoModalProps {
+  onClose: () => void
+  onRefresh: () => void
+}
+
+export function InfoModal({ onClose, onRefresh }: InfoModalProps) {
   return (
     <Modal labelledBy="info-title" onClose={onClose}>
       <div className="info-modal">
@@ -23,6 +28,7 @@ export function InfoModal({ onClose }: { onClose: () => void }) {
         </ul>
         <p className="info-modal__note">점수는 0~100점으로 표시해요.</p>
         <p className="info-modal__note">예보 범위는 한국 시간 기준 오늘 22시부터 다음 날 02시까지예요.</p>
+        <button className="info-modal__refresh" type="button" onClick={onRefresh}>예보 새로고침</button>
       </div>
     </Modal>
   )

@@ -62,6 +62,7 @@ export function RegionDetail({ selection, forecast, onClose }: RegionDetailProps
         <FactorBar icon={Mountain} label="이 장소의 관측 조건" score={selection.cell.placeScore} />
       </div>
       <div className="region-panel__footer">
+        {forecast.nightDate && <p className="region-panel__date">{forecast.nightDate} 밤 예보</p>}
         <p>22:00~다음 날 02:00 · 오전 6시까지의 관측 자료 기준</p>
         <p>{forecast.kind === 'sample' ? '화면 시연용 샘플 예보예요.' : '실제 관측 환경은 예측과 다를 수 있어요.'}</p>
       </div>

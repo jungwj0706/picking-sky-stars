@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { FeatureCollection, Point, Polygon } from 'geojson'
 import type { GeoJSONSource, Map } from 'maplibre-gl'
 import type { NightForecast } from '../../forecast/types'
@@ -6,6 +6,8 @@ import { cellRing } from '../../forecast/findNearestCell'
 import { glowPaint, gridPaint } from '../lib/heatmapPaint'
 
 export function useHeatmapLayer(map: Map | null, forecast: NightForecast | undefined) {
+  const [paintedForecast, setPaintedForecast] = useState<NightForecast>()
+
   useEffect(() => {
     if (!map) return
 
@@ -33,12 +35,17 @@ export function useHeatmapLayer(map: Map | null, forecast: NightForecast | undef
     if (gridSource && glowSource) {
       gridSource.setData(grid)
       glowSource.setData(glow)
-      return
+    } else {
+      map.addSource('forecast-glow', { type: 'geojson', data: glow })
+      map.addSource('forecast-grid', { type: 'geojson', data: grid, tolerance: 0.05 })
+      map.addLayer({ id: 'forecast-glow', source: 'forecast-glow', type: 'heatmap', paint: glowPaint }, 'city-line')
+      map.addLayer({ id: 'forecast-grid', source: 'forecast-grid', type: 'fill', paint: gridPaint }, 'city-line')
     }
 
-    map.addSource('forecast-glow', { type: 'geojson', data: glow })
-    map.addSource('forecast-grid', { type: 'geojson', data: grid, tolerance: 0.05 })
-    map.addLayer({ id: 'forecast-glow', source: 'forecast-glow', type: 'heatmap', paint: glowPaint }, 'city-line')
-    map.addLayer({ id: 'forecast-grid', source: 'forecast-grid', type: 'fill', paint: gridPaint }, 'city-line')
+    const onIdle = () => setPaintedForecast(forecast)
+    map.once('idle', onIdle)
+    return () => { map.off('idle', onIdle) }
   }, [forecast, map])
+
+  return paintedForecast
 }

@@ -1,4 +1,6 @@
+import type { GeoJSON, Position } from 'geojson'
 import type { LngLatBoundsLike } from 'maplibre-gl'
+import type { LngLat } from '../../forecast/types'
 
 export const seoulBounds: LngLatBoundsLike = [
   [126.764, 37.425],
@@ -18,3 +20,26 @@ export const mapLabels = [
   { text: '강남구', coordinates: [127.064, 37.492] },
   { text: '한강', coordinates: [126.95, 37.527] },
 ] satisfies { text: string; coordinates: [number, number]; prominent?: boolean }[]
+
+function ringContains([longitude, latitude]: LngLat, ring: Position[]) {
+  let inside = false
+  for (let index = 0, previous = ring.length - 1; index < ring.length; previous = index++) {
+    const [x, y] = ring[index]
+    const [previousX, previousY] = ring[previous]
+    if ((y > latitude) !== (previousY > latitude) &&
+      longitude < (previousX - x) * (latitude - y) / (previousY - y) + x) {
+      inside = !inside
+    }
+  }
+  return inside
+}
+
+export function isInSeoul(coordinates: LngLat, districts: GeoJSON) {
+  if (districts.type !== 'FeatureCollection') return false
+  const includes = ([outer, ...holes]: Position[][]) =>
+    outer && ringContains(coordinates, outer) && !holes.some((hole) => ringContains(coordinates, hole))
+  return districts.features.some(({ geometry }) => {
+    if (geometry?.type === 'Polygon') return includes(geometry.coordinates)
+    return geometry?.type === 'MultiPolygon' && geometry.coordinates.some(includes)
+  })
+}
