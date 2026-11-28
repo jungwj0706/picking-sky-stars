@@ -1,0 +1,21 @@
+:root {
+  color-scheme: dark;
+  --background: #0d101b;
+  --header: #0b0e18;
+  --panel: #141a2b;
+  --border: #242c42;
+  --text: #edf0f8;
+  --muted: #a0a9bc;
+  --faint: #828ca3;
+  --accent: #efc153;
+  --accent-bright: #ffe384;
+  --accent-dark: #302513;
+  --header-height: 60px;
+  --map-gutter: clamp(20px, 3.15vw, 46px);
+  --control-gutter: 30px;
+  --panel-width: clamp(310px, 25vw, 365px);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}

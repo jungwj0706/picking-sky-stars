@@ -1,3 +1,11 @@
+import { Header } from '../components/layout/Header'
+import { StarMap } from '../features/map/components/StarMap'
+
 export default function App() {
-  return <div>하늘의 별 따기</div>
+  return (
+    <div className="app">
+      <Header />
+      <StarMap />
+    </div>
+  )
 }
