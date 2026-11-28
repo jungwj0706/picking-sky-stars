@@ -40,6 +40,7 @@ export function useMap() {
     instance.touchZoomRotate.disableRotation()
     const canvas = instance.getCanvas()
     canvas.setAttribute('aria-label', '서울 별 가시성 지도')
+    canvas.setAttribute('aria-describedby', 'map-keyboard-help')
     const fit = () => {
       const mobile = element.clientWidth < 720
       if (mobile) {
